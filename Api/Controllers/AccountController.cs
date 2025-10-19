@@ -64,13 +64,16 @@ namespace Api.Controllers
                 Email = model.Email.ToLower(),
                 EmailConfirmed = true,
             };
+
+
             var result = await _userManager.CreateAsync(userToAdd,model.Password);
             if (!result.Succeeded) return BadRequest(result.Errors);
 
-            return Ok("Your account has been created, you can login");
+            return Ok(new JsonResult(new {title = "Account Created", message = "Your account has been created, you can login" }));
         }
 
 
+        #region private Helper Methods
         private UserDto CreateApplicationUserDto(User user)
         {
             return new UserDto
@@ -80,6 +83,7 @@ namespace Api.Controllers
                 JWT = _jwtService.CreatedJWT(user),
             };
         }
+        #endregion
         private async Task<bool> CheckEmailExitsAsync(string email)
         {
             return await _userManager.Users.AnyAsync(x => x.Email == email.ToLower());
